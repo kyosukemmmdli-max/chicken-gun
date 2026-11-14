@@ -3,13 +3,12 @@ on: workflow_dispatch
 jobs:
   activation:
     runs-on: ubuntu-latest
-    container:
-      image: unityci/editor:ubuntu-2019.4.40f1-base-1.0.1
     steps:
       - name: Create activation file
-        run: /opt/unity/Editor/Unity -quit -batchmode -nographics -logFile - -createManualActivationFile || true
-      - name: Show files
-        run: ls -la
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work unityci/editor:ubuntu-2019.4.40f1-base-1.0.1 /opt/unity/Editor/Unity -quit -batchmode -nographics -logFile - -createManualActivationFile || true
+          sudo chmod -R a+rw .
+          ls -la
       - uses: actions/upload-artifact@v4
         with:
           name: Manual Activation File
